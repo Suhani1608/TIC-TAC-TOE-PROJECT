@@ -3,30 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TIC  TAC  TOE</title>
-    <Link rel = "stylesheet" href = "ttt.css">
+    <title>TIC TAC TOE // CORONA ROYAL ASTROLABE</title>
+    <!-- Google Fonts matching Suhani's Rapunzel Portfolio -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="ttt.css">
 </head>
 <body>
-    <div class ="msg-container hide" >
-        <p id="msg">WINNER</p>
-        <button id = "newGame-btn">New Game</button> 
+
+    <!-- Floating Sky Lanterns Background Canvas -->
+    <canvas id="lantern-canvas"></canvas>
+    <div class="sundrop-vignette"></div>
+
+    <!-- Winner / Stalemate Royal Scroll Modal -->
+    <div class="msg-container hide" id="modal-overlay">
+        <div class="modal-card">
+            <span class="modal-stamp">✨ ROYAL DECREE // MATCH CONCLUDED</span>
+            <p id="msg">WINNER</p>
+            <button id="newGame-btn" class="btn primary"><i class="fas fa-wand-magic-sparkles"></i> New Match [R]</button>
+        </div>
     </div>
-    <h1>TIC  TAC  TOE  GAME</h1>
-   
-    <div class ="container">
-    <div class = "game">
-       <button class = "box"></button>
-       <button class = "box"></button>
-       <button class = "box"></button>
-       <button class = "box"></button>
-       <button class = "box"></button>
-       <button class = "box"></button>
-       <button class = "box"></button>
-       <button class = "box"></button>
-       <button class = "box"></button>
-    </div>
-    </div>
-    <button id = "reset">RESET</button> 
-    <script src ="ttt.js"></script>
+
+    <main class="royal-wrapper">
+        <!-- Header & Chime Audio Toggle -->
+        <header class="royal-header">
+            <div class="royal-top-bar">
+                <span class="sys-tag">✨ KINGDOM OF CORONA // GAME THEORY ASTROLABE</span>
+                <button id="sound-toggle" class="sound-btn" aria-label="Toggle Chimes">
+                    <i class="fas fa-music" id="sound-icon"></i>
+                    <span id="sound-label">CHIMES: ON</span>
+                </button>
+            </div>
+
+            <h1>TIC TAC TOE</h1>
+
+            <!-- Royal Control Matrix: Mode, AI Difficulty & Rule Set -->
+            <div class="config-matrix">
+                <!-- Opponent Selector -->
+                <div class="mode-selector">
+                    <button id="mode-ai" class="mode-btn active" title="1v1 against the Sundrop Oracle AI">
+                        <i class="fas fa-crown"></i> vs Oracle AI
+                    </button>
+                    <button id="mode-pvp" class="mode-btn" title="2-Player Local Pass & Play">
+                        <i class="fas fa-user-friends"></i> 2P Royal Duel
+                    </button>
+                </div>
+
+                <!-- AI Difficulty Selector (Minimax) -->
+                <div class="mode-selector" id="ai-diff-group">
+                    <button class="mode-btn diff-btn" data-diff="easy" title="Playful Pascal AI (Random)">PASCAL</button>
+                    <button class="mode-btn diff-btn" data-diff="medium" title="1-Step Block & Win Guard">GUARD</button>
+                    <button class="mode-btn diff-btn active" data-diff="hard" title="Unbeatable Recursive Minimax Oracle">MINIMAX</button>
+                </div>
+
+                <!-- Rule Set: Classic vs Infinite FIFO Lanterns + Hourglass Blitz -->
+                <div class="mode-selector">
+                    <button id="rule-classic" class="mode-btn active" title="Standard 3x3 Rules">CLASSIC</button>
+                    <button id="rule-infinite" class="mode-btn" title="FIFO Queue Mode: Max 3 marks per player (4th mark fades 1st!)">
+                        <i class="fas fa-infinity"></i> INFINITE (FIFO)
+                    </button>
+                    <button id="toggle-blitz" class="mode-btn" title="Toggle 5-Second Hourglass Timer">
+                        <i class="fas fa-hourglass-half"></i> BLITZ: OFF
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Live Scoreboard & Active Turn HUD -->
+        <section class="hud-panel">
+            <div class="score-card player-o active-turn" id="card-o">
+                <span class="player-label" id="label-o">SUNLIGHT (O)</span>
+                <span class="score-num" id="score-o">0</span>
+            </div>
+
+            <div class="turn-status">
+                <span class="turn-tag" id="rule-readout">MINIMAX ORACLE ACTIVE</span>
+                <div id="turn-display" class="turn-badge">O's TURN</div>
+                <span class="draw-counter">TIES: <strong id="score-draw">0</strong></span>
+            </div>
+
+            <div class="score-card player-x" id="card-x">
+                <span class="player-label" id="label-x">ORACLE AI (X)</span>
+                <span class="score-num" id="score-x">0</span>
+            </div>
+        </section>
+
+        <!-- Live Minimax Harmony Bar & Hourglass Blitz Bar -->
+        <div class="telemetry-bars">
+            <div class="eval-bar-wrapper" title="Live Minimax Mathematical Advantage">
+                <span class="eval-label">HARMONY // <strong id="eval-text">BALANCED (0.0)</strong></span>
+                <div class="eval-track">
+                    <div class="eval-fill-o" id="eval-fill-o" style="width: 50%;"></div>
+                </div>
+            </div>
+
+            <div class="blitz-bar-wrapper hide" id="blitz-wrapper">
+                <div class="blitz-fill" id="blitz-fill"></div>
+            </div>
+        </div>
+
+        <!-- 3x3 Royal Astrolabe Grid + Golden Ray SVG Overlay -->
+        <div class="container">
+            <div class="game-board-wrapper">
+                <div class="game" id="board">
+                    <button class="box" data-index="0"><span class="key-num">1</span><span class="mark"></span></button>
+                    <button class="box" data-index="1"><span class="key-num">2</span><span class="mark"></span></button>
+                    <button class="box" data-index="2"><span class="key-num">3</span><span class="mark"></span></button>
+                    <button class="box" data-index="3"><span class="key-num">4</span><span class="mark"></span></button>
+                    <button class="box" data-index="4"><span class="key-num">5</span><span class="mark"></span></button>
+                    <button class="box" data-index="5"><span class="key-num">6</span><span class="mark"></span></button>
+                    <button class="box" data-index="6"><span class="key-num">7</span><span class="mark"></span></button>
+                    <button class="box" data-index="7"><span class="key-num">8</span><span class="mark"></span></button>
+                    <button class="box" data-index="8"><span class="key-num">9</span><span class="mark"></span></button>
+                </div>
+
+                <!-- Animated Golden Sundrop Ray Strike-Through -->
+                <svg class="win-ray-svg" viewBox="0 0 300 300" id="ray-svg">
+                    <line id="ray-line" x1="0" y1="0" x2="0" y2="0" />
+                </svg>
+            </div>
+        </div>
+
+        <p class="queue-hint">KEYS [1-9] TO PLACE MARK // [U] REWIND SPELL // [R] REMATCH</p>
+
+        <!-- Bottom Action Controls -->
+        <div class="controls">
+            <button id="undo-btn" class="btn secondary" disabled>
+                <i class="fas fa-rotate-left"></i> Rewind [U]
+            </button>
+            <button id="reset" class="btn secondary">
+                <i class="fas fa-sync-alt"></i> Reset [R]
+            </button>
+            <button id="clear-scores" class="btn danger">
+                <i class="fas fa-sparkles"></i> Clear Scores
+            </button>
+        </div>
+    </main>
+
+    <script src="ttt.js"></script>
 </body>
 </html>

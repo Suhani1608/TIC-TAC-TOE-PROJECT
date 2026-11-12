@@ -1,65 +1,557 @@
-*{  margin : 0;
-    padding : 0 ;
+/* ==========================================================================
+   SUHANI'S TIC-TAC-TOE // RAPUNZEL & FLOATING LANTERNS EDITION (COMPLETE CSS)
+   ========================================================================== */
+:root {
+    --bg-base: #120924;
+    --bg-panel: rgba(34, 18, 62, 0.85);
+    --gold: #ffcf40;
+    --gold-glow: rgba(255, 207, 64, 0.5);
+    --rose: #f472b6;
+    --rose-glow: rgba(244, 114, 182, 0.5);
+    --emerald: #34d399;
+    --emerald-glow: rgba(52, 211, 153, 0.5);
+    --text-main: #fdf8ff;
+    --text-muted: #cbbce0;
+    --font-royal: 'Cinzel Decorative', 'Cinzel', Georgia, serif;
+    --font-heading: 'Cinzel', Georgia, serif;
+    --font-mono: 'Space Mono', monospace;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
 }
 
-body{
-        background-color:violet;
-        text-align : center;
-        
-    }
-.container{
-    height : 80vh;
-    display : flex;
-
-    justify-content : center;
-    align-items: center;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
-.game{
-    height : 60vmin;
-    width : 60vmin;
-    display : flex;
-    flex-wrap : wrap;
+
+body {
+    background-color: var(--bg-base);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    display: flex;
     justify-content: center;
     align-items: center;
-    gap : 1.5vmin;
-}
-.box{
-    height : 18vmin;
-    width : 18vmin;
-    border-radius : 1rem;
-    border : none;
-    box-shadow : 0 0 1rem black;
-    font-size : 8vmin;
-    color :darkblue;
-    background-color: darksalmon;
-}
-#reset{
-    padding : 1rem;
-    font-size : 1.25rem;
-    background-color: rgb(58, 86, 114);
-    color : whitesmoke;
-    box-shadow : 0 0 1rem black;
-    border-radius: 1rem;
-    border :grey;
-}
-#reset-btn{
-    padding : 1rem;
-    font-size : 1.25rem;
-    background-color: rgb(58, 86, 114);
-    color : whitesmoke;
-    box-shadow : 0 0 1rem black;
-    border-radius: 1rem;
-    border :grey;
-}
-#msg{
-    color :black;
-    font-size: 8vmin;
-
+    text-align: center;
+    overflow-x: hidden;
+    background-image: 
+        radial-gradient(circle at 50% 12%, rgba(255, 207, 64, 0.16), transparent 55%),
+        radial-gradient(circle at 85% 80%, rgba(244, 114, 182, 0.14), transparent 50%);
+    padding: 16px;
+    position: relative;
 }
 
-.msg-container{
-    height: 30vmin;
+/* Floating Sky Lanterns Canvas & Vignette */
+#lantern-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 0;
+    pointer-events: none;
 }
-.hide{
-    display : none;
+
+.sundrop-vignette {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 50%, rgba(8, 3, 18, 0.78) 100%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.royal-wrapper {
+    width: 100%;
+    max-width: 550px;
+    z-index: 2;
+    position: relative;
+}
+
+/* Top Bar & Chime Toggle */
+.royal-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    padding: 0 4px;
+}
+
+.sys-tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 1px;
+}
+
+.sound-btn {
+    background: rgba(255, 207, 64, 0.12);
+    border: 1px solid rgba(255, 207, 64, 0.45);
+    border-radius: 20px;
+    color: var(--gold);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 4px 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.sound-btn:hover {
+    background: var(--gold);
+    color: #120924;
+    box-shadow: 0 0 12px var(--gold-glow);
+}
+
+.sound-btn.muted {
+    background: rgba(244, 114, 182, 0.12);
+    border-color: rgba(244, 114, 182, 0.45);
+    color: var(--rose);
+}
+
+h1 {
+    font-family: var(--font-royal);
+    font-size: clamp(2rem, 5.5vw, 2.9rem);
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, #ffffff 0%, var(--gold) 55%, var(--rose) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 3px 18px rgba(255, 207, 64, 0.35));
+    margin-bottom: 10px;
+    line-height: 1.1;
+}
+
+/* Royal Config Matrix */
+.config-matrix {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.mode-selector {
+    display: inline-flex;
+    background: rgba(20, 10, 40, 0.85);
+    border: 1px solid rgba(255, 207, 64, 0.25);
+    border-radius: 25px;
+    padding: 3px;
+    gap: 4px;
+}
+
+.mode-btn {
+    background: transparent;
+    border: none;
+    border-radius: 20px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 6px 11px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+}
+
+.mode-btn:hover {
+    color: #fff;
+}
+
+.mode-btn.active {
+    background: linear-gradient(135deg, var(--gold), #ffa800);
+    color: #120924;
+    font-weight: 700;
+    box-shadow: 0 0 14px var(--gold-glow);
+}
+
+/* Scoreboard & Turn HUD */
+.hud-panel {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1fr;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.score-card {
+    background: var(--bg-panel);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 207, 64, 0.2);
+    border-radius: 14px;
+    padding: 10px 8px;
+    transition: all 0.3s ease;
+}
+
+.score-card.player-o.active-turn {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(255, 207, 64, 0.3);
+    transform: translateY(-2px);
+}
+
+.score-card.player-x.active-turn {
+    border-color: var(--rose);
+    box-shadow: 0 0 20px rgba(244, 114, 182, 0.35);
+    transform: translateY(-2px);
+}
+
+.player-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+}
+
+.score-num {
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.player-o .score-num { color: var(--gold); }
+.player-x .score-num { color: var(--rose); }
+
+.turn-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.turn-tag {
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    color: var(--gold);
+}
+
+.turn-badge {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 20px;
+    background: rgba(255, 207, 64, 0.14);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    transition: all 0.25s ease;
+}
+
+.draw-counter {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+/* Minimax Harmony Bar & Hourglass Blitz Bar */
+.telemetry-bars {
+    margin-bottom: 14px;
+}
+
+.eval-bar-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.eval-label {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    color: var(--text-muted);
+    min-width: 145px;
+    text-align: left;
+}
+
+.eval-label strong { color: var(--gold); }
+
+.eval-track {
+    flex: 1;
+    height: 8px;
+    background: var(--rose);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+}
+
+.eval-fill-o {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), #fff3b0);
+    transition: width 0.35s ease;
+    box-shadow: 0 0 10px var(--gold);
+}
+
+.blitz-bar-wrapper {
+    width: 100%;
+    height: 5px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.blitz-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--rose));
+    transition: width 0.1s linear;
+}
+
+/* 3x3 Royal Astrolabe Grid */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 6px 0 12px;
+}
+
+.game-board-wrapper {
+    position: relative;
+    width: min(76vw, 330px);
+    height: min(76vw, 330px);
+}
+
+.game {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+    padding: 12px;
+    background: rgba(24, 11, 46, 0.88);
+    backdrop-filter: blur(14px);
+    border: 2px solid rgba(255, 207, 64, 0.38);
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), inset 0 0 25px rgba(255, 207, 64, 0.1);
+}
+
+.box {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(42, 21, 77, 0.75);
+    border: 1px solid rgba(255, 207, 64, 0.22);
+    border-radius: 14px;
+    font-family: var(--font-royal);
+    font-size: clamp(2.1rem, 7vmin, 3rem);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.key-num {
+    position: absolute;
+    top: 4px; left: 7px;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(255, 207, 64, 0.3);
+    pointer-events: none;
+}
+
+/* Hover Preview on Empty Tiles */
+.box:not(:disabled):hover {
+    background-color: rgba(65, 32, 115, 0.85);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(255, 207, 64, 0.25);
+}
+
+.box:not(:disabled):hover::after {
+    content: attr(data-hover);
+    opacity: 0.25;
+    color: var(--gold);
+    font-size: 2.2rem;
+}
+
+.box:disabled { cursor: default; }
+
+/* Player O (Sunlight Gold) & Player X (Lavender Rose) */
+.box.mark-o .mark {
+    color: var(--gold);
+    text-shadow: 0 0 18px var(--gold-glow);
+    animation: popIn 0.22s ease-out;
+}
+.box.mark-o {
+    border-color: rgba(255, 207, 64, 0.55);
+}
+
+.box.mark-x .mark {
+    color: var(--rose);
+    text-shadow: 0 0 18px var(--rose-glow);
+    animation: popIn 0.22s ease-out;
+}
+.box.mark-x {
+    border-color: rgba(244, 114, 182, 0.55);
+}
+
+/* Infinite FIFO Mode: Fading Lantern Warning */
+.box.dying-piece {
+    border-style: dashed !important;
+    border-color: var(--rose) !important;
+    animation: dyingPulse 0.75s infinite alternate;
+}
+
+.box.dying-piece::before {
+    content: "FADING NEXT";
+    position: absolute;
+    bottom: 3px;
+    font-family: var(--font-mono);
+    font-size: 0.48rem;
+    color: var(--rose);
+}
+
+@keyframes dyingPulse {
+    0% { opacity: 0.85; transform: scale(0.98); }
+    100% { opacity: 0.35; transform: scale(0.92); }
+}
+
+/* Winning Trio Highlight */
+.box.win-box {
+    background: rgba(52, 211, 153, 0.2) !important;
+    border-color: var(--emerald) !important;
+}
+.box.win-box .mark {
+    color: var(--emerald) !important;
+    text-shadow: 0 0 20px var(--emerald) !important;
+}
+
+/* Golden Sundrop Ray SVG Strike-Through */
+.win-ray-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+#ray-line {
+    stroke: var(--gold);
+    stroke-width: 6;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 12px var(--gold)) drop-shadow(0 0 24px #fff);
+    stroke-dasharray: 450;
+    stroke-dashoffset: 450;
+    transition: stroke-dashoffset 0.45s ease-out;
+}
+
+#ray-line.active-ray {
+    stroke-dashoffset: 0;
+}
+
+.queue-hint {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0.2; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Bottom Controls & Buttons */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 0.7rem 1.25rem;
+    border-radius: 25px;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid rgba(255, 207, 64, 0.35);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.22s ease;
+}
+
+.btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.btn.primary {
+    background: linear-gradient(135deg, var(--gold), #ffa800);
+    color: #120924;
+    border-color: var(--gold);
+    box-shadow: 0 4px 20px var(--gold-glow);
+}
+
+.btn.primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px var(--gold);
+}
+
+.btn.secondary {
+    background: rgba(34, 18, 62, 0.85);
+    color: var(--text-main);
+}
+
+.btn.secondary:hover:not(:disabled) {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.btn.danger {
+    background: rgba(244, 114, 182, 0.12);
+    color: var(--rose);
+    border-color: rgba(244, 114, 182, 0.4);
+}
+
+.btn.danger:hover {
+    background: var(--rose);
+    color: #120924;
+}
+
+/* Winner / Stalemate Royal Scroll Modal */
+.msg-container {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 4, 22, 0.86);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-card {
+    background: #1c0e38;
+    border: 2px solid var(--gold);
+    border-radius: 20px;
+    padding: 34px 30px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px var(--gold-glow);
+}
+
+.modal-stamp {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--rose);
+    letter-spacing: 1.5px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+#msg {
+    font-family: var(--font-royal);
+    color: var(--gold);
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+    text-shadow: 0 0 18px var(--gold-glow);
+}
+
+.hide {
+    display: none !important;
 }
